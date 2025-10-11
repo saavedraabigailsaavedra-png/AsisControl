@@ -5,7 +5,7 @@ Bienvenido a **AssistControl**, una herramienta diseñada para que los docentes 
 
 ## 📷 Foto del Equipo
 
-![Equipo AssistControl](./equipo-assistcontrol.jpg)
+![Equipo AssistControl](./image.png)
 > *(Guarda esta foto con el nombre **equipo-assistcontrol.jpg** en la misma carpeta donde está este archivo README.md para que se muestre correctamente).*
 
 ## 🧾 Descripción del Proyecto
