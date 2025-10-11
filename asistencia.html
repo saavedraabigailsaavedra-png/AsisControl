@@ -1,0 +1,874 @@
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Asistencia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        /* Date Selector */
+        .date-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .form-group label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input[type="date"] {
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .form-group input[type="date"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Legend */
+        .legend {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .legend h3 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .attendance-btn.license {
+            background: #8b5cf6;
+            color: white;
+            border-color: #8b5cf6;
+        }
+
+        .status-badge.license {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .legend-badge.license {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        /* Attendance Table */
+        .attendance-table {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 1rem;
+            font-weight: 600;
+        }
+
+        .student-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 1rem;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .student-row:hover {
+            background: var(--light);
+        }
+
+        .student-row:last-child {
+            border-bottom: none;
+        }
+
+        .student-code {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .student-name {
+            color: var(--dark);
+        }
+
+        .attendance-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .attendance-btn {
+            padding: 0.625rem 1rem;
+            border: 2px solid transparent;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.875rem;
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .attendance-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .attendance-btn.present {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .attendance-btn.absent {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        .attendance-btn.late {
+            background: var(--warning);
+            color: white;
+            border-color: var(--warning);
+        }
+
+        .attendance-btn.excused {
+            background: var(--info);
+            color: white;
+            border-color: var(--info);
+        }
+
+        .attendance-btn.active {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .status-badge.present {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-badge.absent {
+            background: var(--danger);
+            color: white;
+        }
+
+        .status-badge.late {
+            background: var(--warning);
+            color: white;
+        }
+
+        .status-badge.excused {
+            background: var(--info);
+            color: white;
+        }
+
+        /* Controls */
+        .controls {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            z-index: 50;
+        }
+
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-light {
+            background: var(--light);
+            color: var(--dark);
+            border: 2px solid var(--border);
+        }
+
+        .btn-light:hover {
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-lg);
+            display: none;
+            animation: slideIn 0.3s;
+            z-index: 2000;
+            max-width: 400px;
+        }
+
+        .toast.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            color: #6b7280;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .empty-state h3 {
+            color: var(--dark);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Stats */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .table-header,
+            .student-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .attendance-buttons {
+                justify-content: flex-start;
+            }
+
+            .legend-items {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">📚</span>
+                <span class="logo-text">AsisControl</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Inicio</a></li>
+                <li><a href="estudiantes.html" class="nav-link">Estudiantes</a></li>
+                <li><a href="asistencia.html" class="nav-link active">Registrar</a></li>
+                <li><a href="resumen.html" class="nav-link">Resumen</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1>✏️ Registrar Asistencia</h1>
+            <p>Selecciona el estado de cada estudiante para la fecha actual</p>
+        </div>
+
+        <!-- Date Selector -->
+        <div class="date-section">
+            <div class="form-group">
+                <label for="attendance-date">📅 Fecha de Asistencia:</label>
+                <input type="date" id="attendance-date" required>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <h3>📋 Leyenda de Estados:</h3>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <span class="legend-badge present">✓ Presente</span>
+                    <span>- Asistió a clase</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-badge absent">✗ Falta</span>
+                    <span>- No asistió</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-badge late">⏰ Tardanza</span>
+                    <span>- Llegó tarde</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-badge license">🏥 Licencia</span>
+                    <span>- Licencia médica o permiso</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-container">
+            <div class="stat-card" style="border-left: 4px solid var(--success);">
+                <div class="stat-value" style="color: var(--success);" id="stat-present">0</div>
+                <div class="stat-label">Presentes</div>
+            </div>
+            <div class="stat-card" style="border-left: 4px solid var(--danger);">
+                <div class="stat-value" style="color: var(--danger);" id="stat-absent">0</div>
+                <div class="stat-label">Faltas</div>
+            </div>
+            <div class="stat-card" style="border-left: 4px solid var(--warning);">
+                <div class="stat-value" style="color: var(--warning);" id="stat-late">0</div>
+                <div class="stat-label">Tardanzas</div>
+            </div>
+            <div class="stat-card" style="border-left: 4px solid #8b5cf6;">
+                <div class="stat-value" style="color: #8b5cf6;" id="stat-license">0</div>
+                <div class="stat-label">Licencias</div>
+            </div>
+        </div>
+
+        <!-- Attendance Table -->
+        <div class="attendance-table">
+            <div class="table-header">
+                <div>Código</div>
+                <div>Nombre del Estudiante</div>
+                <div>Estado</div>
+            </div>
+            <div id="attendance-container"></div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-secondary" onclick="saveAttendance()">
+                💾 Guardar Asistencia
+            </button>
+            <button class="btn btn-primary" onclick="location.href='resumen.html'">
+                📊 Ver Resumen
+            </button>
+            <a href="estudiantes.html" class="btn btn-light">
+                👥 Ver Estudiantes
+            </a>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Sistema de Control de Asistencia. Versión 2.0 - Estudiante</p>
+    </footer>
+
+    <script>
+        let students = [];
+        let currentAttendance = {};
+
+        // Inicializar
+        function init() {
+            loadStudents();
+            setTodayDate();
+            loadAttendanceForDate();
+            renderAttendance();
+        }
+
+        function loadStudents() {
+            try {
+                students = JSON.parse(window.localStorage?.getItem('students')) || [];
+                // ORDENAR ESTUDIANTES AQUÍ
+                sortStudents();
+            } catch (e) {
+                students = [];
+            }
+        }
+
+        // FUNCIÓN PARA ORDENAR ESTUDIANTES
+        function sortStudents() {
+            students.sort((a, b) => {
+                // Intentar ordenar por código numérico
+                const codeA = extractNumber(a.code);
+                const codeB = extractNumber(b.code);
+                
+                if (codeA !== null && codeB !== null) {
+                    return codeA - codeB;
+                }
+                
+                // Si no son números, ordenar alfabéticamente
+                return a.code.localeCompare(b.code);
+            });
+        }
+
+        // Extraer número del código
+        function extractNumber(code) {
+            const match = code.match(/\d+/);
+            return match ? parseInt(match[0]) : null;
+        }
+
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('attendance-date');
+            dateInput.value = today;
+            dateInput.max = today;
+            
+            dateInput.addEventListener('change', function() {
+                const selectedDate = new Date(this.value);
+                const currentDate = new Date(today);
+                
+                if (selectedDate > currentDate) {
+                    showToast('⚠️ No puedes registrar asistencia de fechas futuras', 'warning');
+                    this.value = today;
+                    return;
+                }
+                
+                loadAttendanceForDate();
+                renderAttendance();
+            });
+        }
+
+        function loadAttendanceForDate() {
+            const date = document.getElementById('attendance-date').value;
+            if (!date) return;
+
+            try {
+                const allAttendance = JSON.parse(window.localStorage?.getItem('attendance')) || [];
+                currentAttendance = {};
+                
+                allAttendance.forEach(record => {
+                    if (record.date === date) {
+                        currentAttendance[record.code] = record.status;
+                    }
+                });
+            } catch (e) {
+                currentAttendance = {};
+            }
+        }
+
+        function renderAttendance() {
+            const container = document.getElementById('attendance-container');
+            
+            if (students.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📭 No hay estudiantes registrados</h3>
+                        <p>Agrega estudiantes primero para poder registrar asistencia</p>
+                        <a href="estudiantes.html" class="btn btn-primary" style="margin-top: 1rem;">
+                            ➕ Agregar Estudiantes
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = students.map(student => {
+                const status = currentAttendance[student.code] || null;
+                return `
+                <div class="student-row">
+                        <div class="student-code">${student.code}</div>
+                        <div class="student-name">${student.name}</div>
+                        <div class="attendance-buttons">
+                            ${status ? `
+                                <span class="status-badge ${status}">
+                                    ${getStatusLabel(status)}
+                                </span>
+                                <button class="attendance-btn" style="background: var(--warning); color: white;" onclick="changeStatus('${student.code}')">
+                                    ✏️ Editar
+                                </button>
+                            ` : `
+                                <button class="attendance-btn" onclick="setAttendance('${student.code}', 'present')">
+                                    ✓ Presente
+                                </button>
+                                <button class="attendance-btn" onclick="setAttendance('${student.code}', 'absent')">
+                                    ✗ Falta
+                                </button>
+                                <button class="attendance-btn" onclick="setAttendance('${student.code}', 'late')">
+                                    ⏰ Tarde
+                                </button>
+                                <button class="attendance-btn" onclick="setAttendance('${student.code}', 'license')">
+                                    🏥 Licencia
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            updateStats();
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                present: '✓ Presente',
+                absent: '✗ Falta',
+                late: '⏰ Tardanza',
+                license: '🏥 Licencia'
+            };
+            return labels[status] || status;
+        }
+
+        function setAttendance(code, status) {
+            currentAttendance[code] = status;
+            renderAttendance();
+            showToast(`✓ Estado actualizado a: ${getStatusLabel(status)}`, 'success');
+        }
+
+        function changeStatus(code) {
+            delete currentAttendance[code];
+            renderAttendance();
+            showToast('✏️ Ahora puedes seleccionar un nuevo estado', 'warning');
+        }
+
+        function updateStats() {
+            const stats = {
+                present: 0,
+                absent: 0,
+                late: 0,
+                license: 0
+            };
+
+            Object.values(currentAttendance).forEach(status => {
+                if (stats[status] !== undefined) {
+                    stats[status]++;
+                }
+            });
+
+            document.getElementById('stat-present').textContent = stats.present;
+            document.getElementById('stat-absent').textContent = stats.absent;
+            document.getElementById('stat-late').textContent = stats.late;
+            document.getElementById('stat-license').textContent = stats.license;
+        }
+
+        function saveAttendance() {
+            const date = document.getElementById('attendance-date').value;
+            if (!date) {
+                showToast('⚠️ Por favor selecciona una fecha', 'warning');
+                return;
+            }
+
+            const selectedDate = new Date(date);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (selectedDate > today) {
+                showToast('⚠️ No puedes guardar asistencia de fechas futuras', 'warning');
+                return;
+            }
+
+            if (Object.keys(currentAttendance).length === 0) {
+                showToast('⚠️ No hay asistencia registrada para guardar', 'warning');
+                return;
+            }
+
+            try {
+                let allAttendance = JSON.parse(window.localStorage?.getItem('attendance')) || [];
+                
+                allAttendance = allAttendance.filter(record => record.date !== date);
+                
+                Object.entries(currentAttendance).forEach(([code, status]) => {
+                    const student = students.find(s => s.code === code);
+                    if (student) {
+                        allAttendance.push({
+                            code: code,
+                            name: student.name,
+                            date: date,
+                            status: status
+                        });
+                    }
+                });
+
+                window.localStorage?.setItem('attendance', JSON.stringify(allAttendance));
+                showToast('✅ Asistencia guardada exitosamente', 'success');
+            } catch (e) {
+                showToast('❌ Error al guardar la asistencia', 'error');
+            }
+        }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} active`;
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3000);
+        }
+
+        // Inicializar al cargar
+        init();
+    </script>
+</body>
+</html>

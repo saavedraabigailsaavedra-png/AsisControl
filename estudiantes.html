@@ -1,0 +1,710 @@
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Estudiantes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light);
+            transform: translateY(-2px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            max-width: 500px;
+            width: 90%;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            color: var(--primary);
+            font-size: 1.75rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-group input.error {
+            border-color: var(--danger);
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .students-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .student-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            border-left: 4px solid var(--primary);
+        }
+
+        .student-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .student-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .student-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .student-info h3 {
+            color: var(--dark);
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .student-info p {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .student-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .search-box {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .empty-state h3 {
+            color: var(--dark);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: #6b7280;
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            color: #6b7280;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-lg);
+            display: none;
+            animation: slideIn 0.3s;
+            z-index: 2000;
+        }
+
+        .toast.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .students-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">📚</span>
+                <span class="logo-text">AsisControl</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Inicio</a></li>
+                <li><a href="estudiantes.html" class="nav-link active">Estudiantes</a></li>
+                <li><a href="asistencia.html" class="nav-link">Registrar</a></li>
+                <li><a href="resumen.html" class="nav-link">Resumen</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>👥 Lista de Estudiantes</h1>
+            <p>Curso: Sistemas Informáticos | Total: <span id="total-students">0</span> estudiantes</p>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-success" onclick="openModal()">
+                ➕ Agregar Estudiante
+            </button>
+            <a href="asistencia.html" class="btn btn-primary">
+                ✏️ Registrar Asistencia
+            </a>
+            <a href="index.html" class="btn btn-secondary">
+                🏠 Volver al Inicio
+            </a>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="🔍 Buscar estudiante por nombre o código..." onkeyup="searchStudents()">
+        </div>
+
+        <div id="students-container" class="students-grid"></div>
+    </main>
+
+    <div id="add-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➕ Agregar Nuevo Estudiante</h2>
+            </div>
+            <form id="student-form" onsubmit="addStudent(event)">
+                <div class="form-group">
+                    <label for="student-code">Código del Estudiante (solo números)</label>
+                    <input 
+                        type="text" 
+                        id="student-code" 
+                        required 
+                        placeholder="Ej: 2021001"
+                        oninput="validateCode(this)"
+                    >
+                    <div id="code-error" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label for="student-name">Nombre Completo (solo letras y espacios)</label>
+                    <input 
+                        type="text" 
+                        id="student-name" 
+                        required 
+                        placeholder="Ej: Juan Pérez García"
+                        oninput="validateName(this)"
+                    >
+                    <div id="name-error" class="error-message"></div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Sistema de Control de Asistencia. Versión 2.0</p>
+    </footer>
+
+    <script>
+        let students = JSON.parse(localStorage.getItem('students')) || [];
+
+        if (students.length === 0) {
+            students = [
+                { code: '2021001', name: 'Juan Pérez García' },
+                { code: '2021002', name: 'María López Rodríguez' },
+                { code: '2021003', name: 'Carlos Sánchez Martínez' },
+                { code: '2021004', name: 'Ana González López' },
+                { code: '2021005', name: 'Pedro Ramírez Torres' }
+            ];
+            saveStudents();
+        }
+
+        function saveStudents() {
+            localStorage.setItem('students', JSON.stringify(students));
+        }
+
+        function validateCode(input) {
+            const codeError = document.getElementById('code-error');
+            const codeRegex = /^[0-9]+$/;
+            
+            // Eliminar caracteres no numéricos en tiempo real
+            input.value = input.value.replace(/[^0-9]/g, '');
+            
+            if (input.value && !codeRegex.test(input.value)) {
+                input.classList.add('error');
+                codeError.textContent = '❌ Solo se permiten números';
+                codeError.classList.add('active');
+                return false;
+            } else {
+                input.classList.remove('error');
+                codeError.classList.remove('active');
+                return true;
+            }
+        }
+
+        function validateName(input) {
+            const nameError = document.getElementById('name-error');
+            const nameRegex = /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/;
+            
+            // Eliminar caracteres no permitidos en tiempo real
+            input.value = input.value.replace(/[^a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]/g, '');
+            
+            if (input.value && !nameRegex.test(input.value)) {
+                input.classList.add('error');
+                nameError.textContent = '❌ Solo se permiten letras y espacios';
+                nameError.classList.add('active');
+                return false;
+            } else {
+                input.classList.remove('error');
+                nameError.classList.remove('active');
+                return true;
+            }
+        }
+
+        function renderStudents(studentsToRender = students) {
+            const container = document.getElementById('students-container');
+            document.getElementById('total-students').textContent = students.length;
+
+            if (studentsToRender.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📭 No hay estudiantes</h3>
+                        <p>Agrega tu primer estudiante haciendo clic en el botón "Agregar Estudiante"</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = studentsToRender.map(student => `
+                <div class="student-card">
+                    <div class="student-header">
+                        <div class="student-avatar">
+                            ${student.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="student-info">
+                            <h3>${student.name}</h3>
+                            <p>Código: ${student.code}</p>
+                        </div>
+                    </div>
+                    <div class="student-actions">
+                        <button class="btn btn-danger" onclick="deleteStudent('${student.code}')">
+                            🗑️ Eliminar
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openModal() {
+            document.getElementById('add-modal').classList.add('active');
+            document.getElementById('student-form').reset();
+            document.getElementById('name-error').classList.remove('active');
+            document.getElementById('code-error').classList.remove('active');
+            document.getElementById('student-name').classList.remove('error');
+            document.getElementById('student-code').classList.remove('error');
+        }
+
+        function closeModal() {
+            document.getElementById('add-modal').classList.remove('active');
+        }
+        function addStudent(event) {
+            event.preventDefault();
+            
+            const code = document.getElementById('student-code').value.trim();
+            const name = document.getElementById('student-name').value.trim();
+            const nameRegex = /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/;
+            const codeRegex = /^[0-9]+$/;
+            const codeError = document.getElementById('code-error');
+            const nameError = document.getElementById('name-error');
+
+            // Validar código
+            if (!codeRegex.test(code)) {
+                document.getElementById('student-code').classList.add('error');
+                codeError.textContent = '❌ El código solo puede contener números';
+                codeError.classList.add('active');
+                showToast('❌ El código solo puede contener números', 'error');
+                return;
+            }
+
+            // Validar nombre
+            if (!nameRegex.test(name)) {
+                document.getElementById('student-name').classList.add('error');
+                nameError.textContent = '❌ El nombre solo puede contener letras y espacios';
+                nameError.classList.add('active');
+                showToast('❌ El nombre solo puede contener letras', 'error');
+                return;
+            }
+
+            // Validar que el código no exista
+            if (students.some(s => s.code === code)) {
+                document.getElementById('student-code').classList.add('error');
+                codeError.textContent = '❌ El código ya existe';
+                codeError.classList.add('active');
+                showToast('❌ El código ya existe', 'error');
+                return;
+            }
+
+            students.push({ code, name });
+            students.sort((a, b) => a.code.localeCompare(b.code));
+            saveStudents();
+            renderStudents();
+            closeModal();
+            showToast('✅ Estudiante agregado exitosamente', 'success');
+        }
+
+        function deleteStudent(code) {
+            if (!confirm('¿Estás seguro de eliminar este estudiante? También se eliminarán todos sus registros de asistencia.')) {
+                return;
+            }
+
+            students = students.filter(s => s.code !== code);
+            saveStudents();
+            
+            const attendance = JSON.parse(localStorage.getItem('attendance') || '[]');
+            const newAttendance = attendance.filter(a => a.code !== code);
+            localStorage.setItem('attendance', JSON.stringify(newAttendance));
+            
+            renderStudents();
+            showToast('✅ Estudiante eliminado exitosamente', 'success');
+        }
+
+        function searchStudents() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const filtered = students.filter(s => 
+                s.name.toLowerCase().includes(search) || 
+                s.code.toLowerCase().includes(search)
+            );
+            renderStudents(filtered);
+        }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} active`;
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3000);
+        }
+
+        document.getElementById('add-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        renderStudents();
+    </script>
+</body>
+</html>

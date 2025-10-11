@@ -1,0 +1,747 @@
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen de Asistencia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 3rem 2rem;
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .page-header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .date-selector {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .date-selector label {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .date-selector input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .date-selector input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .percentage-card {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            padding: 2.5rem;
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
+            margin-bottom: 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .percentage-card::before {
+            content: '📊';
+            position: absolute;
+            font-size: 15rem;
+            opacity: 0.1;
+            right: -3rem;
+            top: -3rem;
+        }
+
+        .percentage-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .percentage-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.95;
+        }
+
+        .percentage-number {
+            font-size: 5rem;
+            font-weight: bold;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: white;
+            border-radius: 1rem;
+            transition: width 0.5s ease;
+            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .stat-card.success::before {
+            background: var(--success);
+        }
+
+        .stat-card.danger::before {
+            background: var(--danger);
+        }
+
+        .stat-card.warning::before {
+            background: var(--warning);
+        }
+
+        .stat-card.info::before {
+            background: #8b5cf6;
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card.success .stat-value {
+            color: var(--success);
+        }
+
+        .stat-card.danger .stat-value {
+            color: var(--danger);
+        }
+
+        .stat-card.warning .stat-value {
+            color: var(--warning);
+        }
+
+        .stat-card.info .stat-value {
+            color: #8b5cf6;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .students-section {
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .students-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .students-list {
+            padding: 1.5rem;
+        }
+
+        .student-item {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 1.5rem;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .student-item:hover {
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.05), transparent);
+        }
+
+        .student-item:last-child {
+            border-bottom: none;
+        }
+
+        .student-code {
+            background: #e0e7ff;
+            color: var(--primary);
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .student-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .status-badge {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: bold;
+            font-size: 0.95rem;
+            text-align: center;
+            min-width: 130px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badge.present {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-badge.absent {
+            background: var(--danger);
+            color: white;
+        }
+
+        .status-badge.late {
+            background: var(--warning);
+            color: white;
+        }
+
+        .status-badge.license {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .status-badge.none {
+            background: #e5e7eb;
+            color: #6b7280;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-state-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+        }
+
+        .btn-light {
+            background: white;
+            color: var(--dark);
+            border: 2px solid var(--border);
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: none;
+            animation: slideIn 0.3s;
+            z-index: 2000;
+            max-width: 400px;
+            font-weight: 600;
+        }
+
+        .toast.active {
+            display: block;
+        }
+
+        .toast.warning {
+            border-left: 4px solid var(--warning);
+            color: var(--warning);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .page-header p {
+                font-size: 1rem;
+            }
+
+            .percentage-number {
+                font-size: 3.5rem;
+            }
+
+            .student-item {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">📚</span>
+                <span class="logo-text">AsisControl</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Inicio</a></li>
+                <li><a href="estudiantes.html" class="nav-link">Estudiantes</a></li>
+                <li><a href="asistencia.html" class="nav-link">Registrar</a></li>
+                <li><a href="resumen.html" class="nav-link active">Resumen</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>📊 Resumen de Asistencia</h1>
+            <p>Análisis detallado del registro de asistencia estudiantil</p>
+        </div>
+
+        <div class="date-selector">
+            <label for="summary-date">📅 Selecciona la Fecha a Consultar:</label>
+            <input type="date" id="summary-date" required>
+        </div>
+
+        <div class="percentage-card">
+            <div class="percentage-content">
+                <div class="percentage-info">
+                    <h3>🎯 Porcentaje de Asistencia</h3>
+                    <div class="percentage-number" id="attendance-percentage">0%</div>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card success">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="stat-present">0</div>
+                <div class="stat-label">Presentes</div>
+            </div>
+            <div class="stat-card danger">
+                <div class="stat-icon">❌</div>
+                <div class="stat-value" id="stat-absent">0</div>
+                <div class="stat-label">Faltas</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-icon">⏰</div>
+                <div class="stat-value" id="stat-late">0</div>
+                <div class="stat-label">Tardanzas</div>
+            </div>
+            <div class="stat-card info">
+                <div class="stat-icon">🏥</div>
+                <div class="stat-value" id="stat-license">0</div>
+                <div class="stat-label">Licencias</div>
+            </div>
+        </div>
+
+        <div class="students-section">
+            <div class="students-header">
+                👥 Detalle por Estudiante
+            </div>
+            <div class="students-list" id="students-container"></div>
+        </div>
+
+        <div class="controls">
+            <a href="asistencia.html" class="btn btn-primary">
+                ✏️ Registrar Asistencia
+            </a>
+            <a href="estudiantes.html" class="btn btn-secondary">
+                👥 Ver Estudiantes
+            </a>
+            <a href="index.html" class="btn btn-light">
+                🏠 Volver al Inicio
+            </a>
+        </div>
+    </main>
+    <div id="toast" class="toast"></div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Sistema de Control de Asistencia. Versión 2.0</p>
+    </footer>
+
+    <script>
+        let students = [];
+        let attendance = [];
+        let selectedDate = '';
+
+        function init() {
+            loadStudents();
+            setTodayDate();
+            loadSummary();
+        }
+
+        function loadStudents() {
+            const stored = localStorage.getItem('students');
+            students = stored ? JSON.parse(stored) : [];
+        }
+
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('summary-date');
+            dateInput.value = today;
+            dateInput.max = today;
+            selectedDate = today;
+
+            dateInput.addEventListener('change', function() {
+                const selected = new Date(this.value);
+                const current = new Date(today);
+
+                if (selected > current) {
+                    showToast('⚠️ No puedes consultar fechas futuras');
+                    this.value = today;
+                    return;
+                }
+
+                selectedDate = this.value;
+                loadSummary();
+            });
+        }
+
+        function loadSummary() {
+            const allAttendance = JSON.parse(localStorage.getItem('attendance') || '[]');
+            attendance = allAttendance.filter(record => record.date === selectedDate);
+            
+            updateStats();
+            renderStudentsList();
+        }
+
+        function updateStats() {
+            const stats = { present: 0, absent: 0, late: 0, license: 0 };
+            
+            attendance.forEach(record => {
+                if (stats[record.status] !== undefined) {
+                    stats[record.status]++;
+                }
+            });
+
+            document.getElementById('stat-present').textContent = stats.present;
+            document.getElementById('stat-absent').textContent = stats.absent;
+            document.getElementById('stat-late').textContent = stats.late;
+            document.getElementById('stat-license').textContent = stats.license;
+
+            const total = students.length;
+            const percentage = total > 0 ? Math.round((stats.present / total) * 100) : 0;
+            
+            document.getElementById('attendance-percentage').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+        }
+
+        function renderStudentsList() {
+            const container = document.getElementById('students-container');
+
+            if (students.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>No hay estudiantes registrados</h3>
+                        <p>Agrega estudiantes para ver el resumen de asistencia</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = students.map(student => {
+                const record = attendance.find(a => a.code === student.code);
+                const status = record ? record.status : 'none';
+                const label = getStatusLabel(status);
+
+                return `
+                    <div class="student-item">
+                        <div class="student-code">${student.code}</div>
+                        <div class="student-name">${student.name}</div>
+                        <span class="status-badge ${status}">${label}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                present: '✓ Presente',
+                absent: '✗ Falta',
+                late: '⏰ Tardanza',
+                license: '🏥 Licencia',
+                none: 'Sin registro'
+            };
+            return labels[status] || 'Sin registro';
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast warning active';
+            setTimeout(() => toast.classList.remove('active'), 3000);
+        }
+
+        init();
+    </script>
+</body>
+</html>
