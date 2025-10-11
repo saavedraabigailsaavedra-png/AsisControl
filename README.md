@@ -1,5 +1,4 @@
-
-# 🧾 AssistControl — Sistema de Control de Asistencia Visual
+ # 🧾 AssistControl — Sistema de Control de Asistencia Visual
 
 Bienvenido a **AssistControl**, una herramienta diseñada para que los docentes gestionen la asistencia de sus estudiantes de forma simple, visual y eficiente.
 
@@ -124,5 +123,3 @@ Todos los derechos reservados © 2025 — *Equipo AssistControl*.
 
 
 3. Súbelo todo a tu repositorio en GitHub (por ejemplo: /AssistControl/README.md).
-
-
