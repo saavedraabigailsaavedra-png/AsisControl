@@ -410,9 +410,21 @@
         }
 
         @media (max-width: 768px) {
+            .nav-container {
+                padding: 1rem;
+            }
+
             .nav-menu {
                 flex-direction: column;
                 gap: 0.5rem;
+            }
+
+            .main-content {
+                padding: 0 1rem;
+            }
+
+            .page-header {
+                padding: 1.5rem;
             }
 
             .page-header h1 {
@@ -430,6 +442,29 @@
 
             .students-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .modal-actions .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .page-header p {
+                font-size: 0.95rem;
             }
         }
     </style>
@@ -518,18 +553,8 @@
     </footer>
 
     <script>
+        // Cargar estudiantes desde localStorage (sin datos precargados)
         let students = JSON.parse(localStorage.getItem('students')) || [];
-
-        if (students.length === 0) {
-            students = [
-                { code: '2021001', name: 'Juan Pérez García' },
-                { code: '2021002', name: 'María López Rodríguez' },
-                { code: '2021003', name: 'Carlos Sánchez Martínez' },
-                { code: '2021004', name: 'Ana González López' },
-                { code: '2021005', name: 'Pedro Ramírez Torres' }
-            ];
-            saveStudents();
-        }
 
         function saveStudents() {
             localStorage.setItem('students', JSON.stringify(students));
@@ -580,8 +605,8 @@
             if (studentsToRender.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <h3>📭 No hay estudiantes</h3>
-                        <p>Agrega tu primer estudiante haciendo clic en el botón "Agregar Estudiante"</p>
+                        <h3>📭 No hay estudiantes registrados</h3>
+                        <p>Comienza agregando estudiantes haciendo clic en el botón "Agregar Estudiante"</p>
                     </div>
                 `;
                 return;
@@ -619,6 +644,7 @@
         function closeModal() {
             document.getElementById('add-modal').classList.remove('active');
         }
+
         function addStudent(event) {
             event.preventDefault();
             

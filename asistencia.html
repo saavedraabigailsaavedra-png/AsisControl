@@ -243,6 +243,7 @@
             display: flex;
             gap: 0.5rem;
             justify-content: flex-end;
+            flex-wrap: wrap;
         }
 
         .attendance-btn {
@@ -255,6 +256,8 @@
             font-size: 0.875rem;
             background: var(--light);
             color: var(--dark);
+            flex: 0 0 auto;
+            white-space: nowrap;
         }
 
         .attendance-btn:hover {
@@ -490,32 +493,96 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+            .main-content {
+                padding: 0 1rem 2rem;
+            }
+
+            .nav-container {
+                padding: 1rem;
+            }
+
             .nav-menu {
                 flex-direction: column;
                 gap: 0.5rem;
+            }
+
+            .page-header {
+                padding: 1.5rem;
             }
 
             .page-header h1 {
                 font-size: 1.75rem;
             }
 
-            .table-header,
+            .page-header p {
+                font-size: 0.95rem;
+            }
+
+            .table-header {
+                display: none;
+            }
+
             .student-row {
                 grid-template-columns: 1fr;
-                gap: 0.5rem;
+                gap: 1rem;
+                padding: 1rem;
+                border: 1px solid var(--border);
+                border-radius: 0.5rem;
+                margin-bottom: 1rem;
+                background: white;
+            }
+
+            .student-row:last-child {
+                border-bottom: 1px solid var(--border);
+            }
+
+            .student-code {
+                font-size: 1.1rem;
+            }
+
+            .student-name {
+                font-size: 1rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px dashed var(--border);
             }
 
             .attendance-buttons {
                 justify-content: flex-start;
+                gap: 0.5rem;
+            }
+
+            .attendance-btn {
+                flex: 1 1 calc(50% - 0.25rem);
+                min-width: 0;
+                padding: 0.75rem 0.5rem;
+                font-size: 0.8rem;
+                text-align: center;
+            }
+
+            .status-badge {
+                width: 100%;
+                margin-bottom: 0.5rem;
             }
 
             .legend-items {
                 flex-direction: column;
-                gap: 0.5rem;
+                gap: 0.75rem;
+            }
+
+            .legend-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+
+            .legend-badge {
+                width: 100%;
+                text-align: center;
             }
 
             .controls {
                 flex-direction: column;
+                padding: 1rem;
             }
 
             .btn {
@@ -524,7 +591,38 @@
             }
 
             .stats-container {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .toast {
+                bottom: 1rem;
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .attendance-btn {
+                flex: 1 1 100%;
+                font-size: 0.85rem;
+            }
+
+            .stat-value {
+                font-size: 1.25rem;
             }
         }
     </style>
